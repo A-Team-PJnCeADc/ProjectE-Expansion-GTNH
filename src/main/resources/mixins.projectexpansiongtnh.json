@@ -16,7 +16,8 @@
     "SlotLockMixin"
   ],
   "client": [
-    "GUITransmutationMixin"
+    "GUITransmutationMixin",
+    "ToolTipEventMixin"
   ],
   "server": []
 }

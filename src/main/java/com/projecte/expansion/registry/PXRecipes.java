@@ -1518,7 +1518,7 @@ public final class PXRecipes {
             px("final_star_shard"));
     }
 
-    // ---------- 材料解析 ----------
+    // 材料解析
 
     private static ItemStack st(ItemStack base, int count) {
         ItemStack out = base.copy();
@@ -1793,7 +1793,7 @@ public final class PXRecipes {
         return new ItemStack(Items.dye, 1, dmg);
     }
 
-    // ---------- 价值配方记录(供 PXEmc 定价使用) ----------
+    // 价值配方记录(供 PXEmc 定价使用)
 
     private static final java.util.List<ValueRecipe> VALUE_RECIPES = new java.util.ArrayList<>();
 
@@ -1849,7 +1849,7 @@ public final class PXRecipes {
         VALUE_RECIPES.add(new ValueRecipe(out, slots));
     }
 
-    // ---------- 添加器 ----------
+    // 添加器
 
     private static void addShaped(ItemStack out, Object... recipe) {
         GameRegistry.addRecipe(new ShapedOreRecipe(out, recipe));

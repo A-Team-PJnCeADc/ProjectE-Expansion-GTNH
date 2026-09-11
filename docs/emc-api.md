@@ -181,3 +181,14 @@ PXEmcAccess.addEmcBig(owner, price.multiply(count));      // 精确入账;自动
 转化接口(以及后续机器)因此**全程精确**:物品价取 `PXEmcTable`,余额在团队模式下取 BigInteger 池。
 只有 ProjectE 自己的 double 视图(玩家 props、客户端显示、`TeamEmcPKT`)仍是 double —— 超过约 9e15
 后是近似值,这是 PE 存储类型决定的,不影响服务端记账。
+
+## AutoEMC-GTNH 的接入方式(已实现)
+
+AutoEMC 通过 `com.gtnh.autoemc.compat.ProjectExpansionCompat`(全反射,无编译依赖)对接本 mod:
+
+| 方向 | 调用 | 行为 |
+| --- | --- | --- |
+| 读基础价 | `PXEmcValues.getValue(ItemStack)` / `hasValue` | 优先用本 mod 的精确值(超 int 时按原逻辑钳到 `Integer.MAX_VALUE - 1`,因为 AutoEMC 的运算仍是 int) |
+| 写算出的值 | `PXEmcValues.register(Item, BigInteger)` | 写进本 mod 的精确表,并镜像进 ProjectE 的 int 表 → 转化桌/冷凝器/机器按精确值记账 |
+
+没装本 mod 时 `ProjectExpansionCompat` 全部返回 null/false,AutoEMC 完全走原来的 ProjectE 路径(行为不变)。

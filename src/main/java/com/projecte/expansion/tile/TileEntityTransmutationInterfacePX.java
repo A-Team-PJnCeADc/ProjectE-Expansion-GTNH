@@ -63,6 +63,7 @@ public class TileEntityTransmutationInterfacePX extends TileEntity implements II
     private ItemStack[] knowledge = NO_KNOWLEDGE;
     private int[] accessibleSlots = new int[] { INPUT_SLOT };
     private long lastRefresh = Long.MIN_VALUE;
+    private int lastNotifiedKnowledgeCount = -1;
     private boolean knowledgeDirty = true;
 
     // 所有者
@@ -172,6 +173,15 @@ public class TileEntityTransmutationInterfacePX extends TileEntity implements II
             copy = trimmed;
         }
         knowledge = copy;
+
+        // 知识条目数变化时轻推邻居:AE 的存储总线/管道据此尽快重建视图,
+        // 否则要等它们下一次自发轮询(玩家观感是"面板里什么都没有")
+        if (copy.length != lastNotifiedKnowledgeCount) {
+            lastNotifiedKnowledgeCount = copy.length;
+            if (worldObj != null && !worldObj.isRemote) {
+                worldObj.notifyBlocksOfNeighborChange(xCoord, yCoord, zCoord, getBlockType());
+            }
+        }
 
         int[] slots = new int[copy.length + 1];
         for (int i = 0; i < slots.length; i++) {

@@ -67,10 +67,12 @@ public final class PXEmcValues {
         PXEmcTable.register(item, value);
     }
 
+    /**
+     * 按完整物品栈(物品 + 元数据 + NBT)登记精确值。传入带元数据的栈时**必须**用这个重载:
+     * {@link #register(Item, BigInteger)} 只覆盖 damage 0,会把 GT metaitem 的其它变体丢价。
+     */
     public static void register(ItemStack stack, BigInteger value) {
-        if (stack != null) {
-            PXEmcTable.register(stack.getItem(), value);
-        }
+        PXEmcTable.register(stack, value);
     }
 
     /**
@@ -98,7 +100,7 @@ public final class PXEmcValues {
         return v != null && v.compareTo(PE_INT_CAP) > 0;
     }
 
-    /** 简短缩写文本(2.72Qi、1.45M ...)。 */
+    /** 简短缩写文本(2.72Qi、1.45M …)。 */
     public static String format(BigInteger value) {
         return value == null ? "0" : EMCFormatPX.format(value);
     }

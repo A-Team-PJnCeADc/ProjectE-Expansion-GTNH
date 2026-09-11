@@ -30,12 +30,37 @@ public abstract class TransmutationInventoryMixin {
     @Shadow(remap = false)
     public double emc;
 
-    @Inject(method = "addEmc", at = @At("HEAD"), cancellable = true, require = 0, remap = false)
+    /** HEAD 记录调用前的值;这里**不能取消**方法,原因见下方 TAIL 注入的注释。 */
+    private double pxEmcBeforeAdd;
+    private boolean pxEmcCaptured;
+
+    @Inject(method = "addEmc", at = @At("HEAD"), require = 0, remap = false)
+    private void projectexpansiongtnh$captureBeforeAdd(double value, CallbackInfo ci) {
+        PXPatchLog.mark("player EMC addEmc pre-capture (HEAD, non-cancellable)");
+        pxEmcBeforeAdd = emc;
+        pxEmcCaptured = true;
+    }
+
+    /**
+     * TAIL 修正被夹取的结果。
+     *
+     * <p>
+     * 这里刻意**不用** {@code HEAD + cancel} 的写法:ProjectE-Team 在 {@code addEmc} 的 TAIL
+     * 注入团队池转发({@code TeamManager.onEmcAdd}),而 HEAD 取消会让原方法体连同它的 RETURN
+     * 一起不执行,TAIL 注入点因此永远不会跑 —— 症状是团队模式下(共享 EMC 开着)卖东西时
+     * "EMC 不进团队池、转化桌仍显示团队池原值(0)",而且卖掉的东西等于凭空消失。
+     * 所以让原逻辑照常执行,只在最后把正确结果覆盖回去;两个 TAIL 处理器互不依赖
+     * (对方只用参数 {@code value}),顺序无关。
+     */
+    @Inject(method = "addEmc", at = @At("TAIL"), require = 0, remap = false)
     private void projectexpansiongtnh$raiseCeiling(double value, CallbackInfo ci) {
         PXPatchLog.mark("player EMC ceiling lifted (was ProjectE 2^30)");
-        double result = emc + value;
-        emc = (Double.isNaN(result) || result < 0D) ? 0D : Math.min(result, PX_MAX_EMC);
-        ci.cancel();
+        double base = pxEmcCaptured ? pxEmcBeforeAdd : emc - value;
+        pxEmcCaptured = false;
+        double result = base + value;
+        // 负数/NaN/无穷(unset 的 Infinity 或量级溢出)一律收敛成合法值,避免余额度变成 Infinity
+        emc = (Double.isNaN(result) || Double.isInfinite(result) || result < 0D) ? Double.MAX_VALUE
+            : Math.min(result, PX_MAX_EMC);
     }
 
     @Inject(method = "hasMaxedEmc", at = @At("HEAD"), cancellable = true, require = 0, remap = false)

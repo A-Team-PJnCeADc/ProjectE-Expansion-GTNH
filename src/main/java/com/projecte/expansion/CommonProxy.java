@@ -19,7 +19,12 @@ public class CommonProxy {
     public void init(FMLInitializationEvent event) {
         // Waila(GTNH 的 HUD,对应上游的 Jade 集成):按类名注册,没装 Waila 时该类不会被加载
         if (Loader.isModLoaded("Waila")) {
-            FMLInterModComms.sendMessage("Waila", "register", "com.projecte.expansion.integration.WailaProviderPX");
+            // Waila 的 IMC 字符串格式是 "完整类名.静态方法名"(点分,方法在最后):
+            // 它会按最后一个点切分,取前面全部当类名 —— 只给类名会报 Could not find class <包名>
+            FMLInterModComms.sendMessage(
+                "Waila",
+                "register",
+                "com.projecte.expansion.integration.WailaProviderPX.callBackRegister");
         }
     }
 

@@ -25,7 +25,7 @@ import mcp.mobius.waila.api.IWailaRegistrar;
  * Waila 集成(1.7.10 里对应上游的 Jade):看向转化接口时显示所有者、生效 EMC、已学习数量与过滤模式。
  *
  * <p>
- * 通过 IMC 消息按类名注册({@code FMLInterModComms.sendMessage("Waila", "register", ...)}),
+ * 通过 IMC 消息按类名注册({@code FMLInterModComms.sendMessage("Waila", "register", …)}),
  * 没装 Waila 时这个类不会被加载,所以可以只做编译期依赖。
  *
  * <p>
