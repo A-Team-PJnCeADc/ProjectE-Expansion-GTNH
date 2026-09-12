@@ -176,6 +176,78 @@ public final class PXEmcTable {
         return TABLE;
     }
 
+    /**
+     * 需要同步给客户端的条目:所有超过 ProjectE int 上限的值。
+     *
+     * <p>
+     * 不超过 int 的那些不用传 —— ProjectE 自己的同步包已经带了(它只传 int);而客户端要显示精确值,
+     * 就必须拿到 int 装不下的那部分。栈级条目按 物品 + 元数据 发送(NBT 不参与同步:客户端靠元数据级
+     * 兜底表也能查到同一个变体)。
+     */
+    public static List<SyncEntry> entriesForSync() {
+        List<SyncEntry> out = new ArrayList<>();
+        BigInteger intMax = BigInteger.valueOf(Integer.MAX_VALUE);
+        for (Map.Entry<StackKey, BigInteger> e : STACK_TABLE.entrySet()) {
+            if (e.getValue() != null && e.getValue()
+                .compareTo(intMax) > 0) {
+                ItemStack stack = e.getKey().stack;
+                out.add(
+                    new SyncEntry(
+                        Item.getIdFromItem(stack.getItem()),
+                        stack.getItemDamage(),
+                        e.getValue()
+                            .toString()));
+            }
+        }
+        for (Map.Entry<Item, BigInteger> e : TABLE.entrySet()) {
+            if (e.getValue() != null && e.getValue()
+                .compareTo(intMax) > 0) {
+                out.add(
+                    new SyncEntry(
+                        Item.getIdFromItem(e.getKey()),
+                        0,
+                        e.getValue()
+                            .toString()));
+            }
+        }
+        return out;
+    }
+
+    /**
+     * 客户端收到服务端同步后写入(只写本模组的表,**不**镜像进 ProjectE:客户端的 PE 表是 int,镜像没有意义)。
+     * 同时写栈级与元数据级表:服务端只发了 物品 + 元数据,客户端用同元数据的任意 NBT 变体查询都能命中。
+     */
+    public static void applySynced(int itemId, int damage, String valueText) {
+        Item item = Item.getItemById(itemId);
+        if (item == null || valueText == null) return;
+        BigInteger value;
+        try {
+            value = new BigInteger(valueText.trim());
+        } catch (NumberFormatException bad) {
+            return;
+        }
+        if (value.signum() <= 0) return;
+        ItemStack stack = new ItemStack(item, 1, damage);
+        STACK_TABLE.put(new StackKey(stack, true, true), value);
+        ItemStack noNbt = stack.copy();
+        noNbt.setTagCompound(null);
+        DAMAGE_TABLE.put(new StackKey(noNbt, false, false), value);
+    }
+
+    /** 同步条目:一个物品(物品 + 元数据)与其精确值的十进制文本。 */
+    public static final class SyncEntry {
+
+        public final int itemId;
+        public final int damage;
+        public final String value;
+
+        public SyncEntry(int itemId, int damage, String value) {
+            this.itemId = itemId;
+            this.damage = damage;
+            this.value = value;
+        }
+    }
+
     /** 夹到本 mod 认可的价格上限;见 {@link #PRICE_CAP}。 */
     public static BigInteger cap(BigInteger value) {
         if (value == null) return null;

@@ -23,7 +23,7 @@ ProjectE-Expansion-GTNH 是 **[Project Expansion](https://github.com/DonovanDMC/
 
 ## 核心机制
 
-- **精确 EMC 表**:`PXEmcTable` 维护三张表——栈级(物品 + 元数据 + NBT)、元数据级(只按物品 + damage,兜底带 NBT/充能状态的同一变体)、物品级(本模组自有物品);查询顺序为 栈级 → 元数据级 → 物品级 → 已注册的 `IPXEmcProvider` → 最后才回落到 ProjectE 的 int 表
+- **精确 EMC 表**:`PXEmcTable` 维护三张表——栈级(物品 + 元数据 + NBT)、元数据级(只按物品 + damage,兜底带 NBT/充能状态的同一变体)、物品级(本模组自有物品);查询顺序为 栈级 -> 元数据级 -> 物品级 -> 已注册的 `IPXEmcProvider` -> 最后才回落到 ProjectE 的 int 表
 - **只读式集成**:不重编 ProjectE。PE 的收银口(`SlotConsume` 拖入、`TransmutationContainer` shift-click、`SlotOutput` 点输出)、转化桌 EMC 上限(`addEmc`/`hasMaxedEmc`)、锁定槽、凝聚器全部由 Mixin 在运行时改写,名字对不上时静默失效而不是崩溃(`require = 0`)
 - **Late mixin**:所有打向 ProjectE 的 mixin 走 `LateMixinLoader`(`ILateMixinLoader`),并从 jar 的 MANIFEST 里移除 `MixinConfigs` —— 否则配置会在 ProjectE 进入类加载器之前被处理,导致真实实例在 `PECore.preInit` 崩溃
 - **价格上限 1e60**:上游量级在 1e60 一档,而 PE 的玩家 EMC 是 double(约 1.8e308)。写回 PE 的 int 表时夹取,本模组侧保留精确 BigInteger
