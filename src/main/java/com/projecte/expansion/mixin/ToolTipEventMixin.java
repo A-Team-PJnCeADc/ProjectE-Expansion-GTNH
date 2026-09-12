@@ -25,9 +25,9 @@ import moze_intel.projecte.events.ToolTipEvent;
  * ProjectE 的 {@code ToolTipEvent.tTipEvent(ItemTooltipEvent)} 会给有价的物品加一行
  * {@code EMC: <值>}(以及整叠的 {@code Stack EMC: <值×数量>}),而它读的是
  * {@code EMCHelper.getEmcValue}(int,上限 2147483647)。因此高价物品在提示里永远显示
- * {@code 2,147,483,647}。这里在 PE 写完提示后把那一行的数字换成我们的精确值
- * ({@code 2.72Qi (2720037735727963008)}),只在精确值确实超过 ProjectE 的 int 上限时替换,
- * 其余情况保持 PE 原样(避免把正常物品的提示搞乱)。
+ * {@code 2,147,483,647}。这里在 PE 写完提示后把那一行换成"缩写 + 精确值"({@code 2.72Qi (2720037735727963008)}),
+ * 只在精确值确实超过 ProjectE 的 int 上限时替换,其余情况保持 PE 原样(避免把正常物品的提示搞乱)。
+ * 本 mod 不再另外加一行"精确 EMC:" —— 那就是同一个数值显示两遍。
  *
  * <p>
  * 只能装在客户端({@link ItemTooltipEvent} 是纯客户端的 Forge 事件),因此本 mixin 写在
@@ -73,6 +73,8 @@ public abstract class ToolTipEventMixin {
             }
             // 整叠一行要乘上数量,和 ProjectE 的语义一致
             BigInteger shown = wholeStack ? exact.multiply(BigInteger.valueOf(Math.max(1, stack.stackSize))) : exact;
+            // 保留 PE 这一行的版式:缩写 + 括号里的精确十进制(例如 2.72Qi (2720037735727963008))。
+            // 不要另加"精确 EMC:"行 —— 那是重复显示同一个数值(本 mod 的物品已去掉那行)。
             lines.set(i, prefix + " " + EMCFormatPX.format(shown) + " (" + shown + ")");
             patched = true;
         }

@@ -127,7 +127,14 @@ public final class PXEmcValues {
             .toBigInteger();
     }
 
-    /** 追加本 mod 为自己的物品添加的 tooltip 行。 */
+    /**
+     * 追加本 mod 曾经为物品添加的"精确 EMC:"tooltip 行。
+     *
+     * <p>
+     * **本 mod 的物品已不再调用它**:ProjectE 自己会给有价物品加 {@code EMC: 缩写 (精确值)}
+     * 一行(由 {@link com.projecte.expansion.mixin.ToolTipEventMixin} 补上精确值),
+     * 再加这一行就是同一个数值显示两遍。方法保留仅为兼容已有调用方。
+     */
     @SuppressWarnings("unchecked")
     public static void addTooltip(ItemStack stack, List<String> lines) {
         BigInteger value = getValue(stack);

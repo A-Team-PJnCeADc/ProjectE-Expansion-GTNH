@@ -7,9 +7,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.StatCollector;
 
-import com.projecte.expansion.api.PXEmcValues;
-
-/** 转化接口的物品形态:精确 EMC 行 + 方块用法说明(1.7.10 的 Block 没有 addInformation)。 */
+/** 转化接口的物品形态:方块用法说明(1.7.10 的 Block 没有 addInformation);EMC 行交给 ProjectE。 */
 public class ItemBlockTransmutationInterfacePX extends ItemBlockPX {
 
     public ItemBlockTransmutationInterfacePX(Block block) {
@@ -21,6 +19,5 @@ public class ItemBlockTransmutationInterfacePX extends ItemBlockPX {
         for (int i = 1; i <= 3; i++) {
             lines.add(StatCollector.translateToLocal("item.projectexpansiongtnh.transmutation_interface.tooltip." + i));
         }
-        PXEmcValues.addTooltip(stack, lines);
     }
 }

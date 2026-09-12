@@ -2,7 +2,6 @@ package com.projecte.expansion.mixin;
 
 import java.math.BigInteger;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.StatCollector;
 
@@ -39,9 +38,6 @@ import moze_intel.projecte.gameObjs.gui.GUITransmutation;
 @Mixin(GUITransmutation.class)
 public abstract class GUITransmutationMixin {
 
-    /** 转化桌面板宽 228px,EMC 行从 x=6 开始;留给精确数字的最大宽度 */
-    private static final int EMC_LINE_MAX_WIDTH = 200;
-
     @Shadow(remap = false)
     TransmutationInventory inv;
 
@@ -51,6 +47,12 @@ public abstract class GUITransmutationMixin {
         require = 0,
         remap = false)
     private String projectexpansiongtnh$emcLine(String original) {
+        // 只认 EMC 那一行("EMC: 2,147,483,647" 这类,前缀来自语言文件);其它 String 局部量原样返回,
+        // 避免这个"无 index 的 @ModifyVariable"误伤同方法里的其它字符串
+        if (original == null
+            || !original.startsWith(StatCollector.translateToLocal("pe.emc.emc_tooltip_prefix") + " ")) {
+            return original;
+        }
         PXPatchLog.mark("transmutation tablet EMC display (ModifyVariable)");
         return emcLine();
     }
@@ -77,7 +79,11 @@ public abstract class GUITransmutationMixin {
     }
 
     /**
-     * 转化桌 EMC 行文本:用我们的缩写值(例如 2.72Qi),而不是被 (int) 截断的十进制数。
+     * 转化桌 EMC 行文本:只显示缩写值(例如 {@code 2.72Qi})。
+     *
+     * <p>
+     * 规则:超过 {@link Integer#MAX_VALUE} 的数值**只显示缩写**,不附精确数字 —— 精确十进制太长,
+     * 面板(宽 228,EMC 行从 x=6 起画)放不下,缩写已足以表达量级。
      *
      * <p>
      * 优先取 ProjectE-Team 客户端缓存的**精确**团队 EMC(装了 PE-E-GTNH 时它会随 TeamEmcPKT
@@ -86,17 +92,6 @@ public abstract class GUITransmutationMixin {
     private String emcLine() {
         BigInteger exactTeamEmc = ProjectETeamClientPX.getTeamEmcBig();
         BigInteger value = exactTeamEmc != null ? exactTeamEmc : PXEmcTable.fromPe(inv.emc);
-        String abbrev = StatCollector.translateToLocal("pe.emc.emc_tooltip_prefix") + " " + EMCFormatPX.format(value);
-        if (value.compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) <= 0) {
-            return abbrev;
-        }
-        // 大数值才附精确数字,而且**必须放得下**:转化桌面板宽 228,EMC 行从 x=6 开始画,
-        // 全称太长就会溢出面板(用户要求:放不下就只用缩写)
-        String full = abbrev + " (" + value + ")";
-        FontRenderer font = Minecraft.getMinecraft().fontRenderer;
-        if (font != null && font.getStringWidth(full) <= EMC_LINE_MAX_WIDTH) {
-            return full;
-        }
-        return abbrev;
+        return StatCollector.translateToLocal("pe.emc.emc_tooltip_prefix") + " " + EMCFormatPX.format(value);
     }
 }
