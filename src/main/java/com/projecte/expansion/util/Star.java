@@ -1,5 +1,7 @@
 package com.projecte.expansion.util;
 
+import java.util.Locale;
+
 /**
  * Klein 风格的星等级:EIN(1) .. OMEGA(6),每级都有
  * magnum / colossal / gargantuan 三种星(共 18 个物品)。
@@ -17,7 +19,7 @@ public enum Star {
 
     public String typeDir(StarType type) {
         return type.name()
-            .toLowerCase(java.util.Locale.US);
+            .toLowerCase(Locale.US);
     }
 
     public enum StarType {

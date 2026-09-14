@@ -3,6 +3,8 @@ package com.projecte.expansion.registry;
 // 由 tools/gen_recipes.py 从上游 ProjectExpansion 配方 JSON 生成
 // (127 个无序配方 + 121 个有序配方)。请勿手改。
 
+import java.util.Locale;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -1565,8 +1567,8 @@ public final class PXRecipes {
         }
         if (name.matches("(magnum|colossal|gargantuan)_star_(ein|zwei|drei|vier|sphere|omega)")) {
             String[] parts = name.split("_");
-            Star.StarType type = Star.StarType.valueOf(parts[0].toUpperCase(java.util.Locale.US));
-            Star star = Star.valueOf(parts[2].toUpperCase(java.util.Locale.US));
+            Star.StarType type = Star.StarType.valueOf(parts[0].toUpperCase(Locale.US));
+            Star star = Star.valueOf(parts[2].toUpperCase(Locale.US));
             return PXItems.STARS[type.ordinal()][star.ordinal()];
         }
         throw new IllegalArgumentException("unmapped expansion item: " + name);
@@ -1577,11 +1579,11 @@ public final class PXRecipes {
     }
 
     private static Matter matter(String name) {
-        return Matter.valueOf(name.toUpperCase(java.util.Locale.US));
+        return Matter.valueOf(name.toUpperCase(Locale.US));
     }
 
     private static Fuel fuel(String name) {
-        return Fuel.valueOf(name.toUpperCase(java.util.Locale.US));
+        return Fuel.valueOf(name.toUpperCase(Locale.US));
     }
 
     private static Item pxSingle(String name) {

@@ -268,7 +268,7 @@ public class TileEntityTransmutationInterfacePX extends TileEntity implements II
         return count.intValue();
     }
 
-    // 输入:物品 → EMC
+    // 输入:物品 -> EMC
 
     private void absorb(ItemStack stack, EntityPlayer owner) {
         BigInteger price = priceOf(stack);

@@ -13,8 +13,8 @@ import moze_intel.projecte.playerData.Transmutation;
  * 所有者 EMC / 知识访问入口(门面)。
  *
  * <p>
- * 选择顺序:<b>其它 mod 注册的实现</b> → 装了 ProjectE-Team 时的反射实现
- * ({@link ProjectETeamAccess}) → 纯 ProjectE 实现({@link ProjectEAccess})。
+ * 选择顺序:<b>其它 mod 注册的实现</b> -> 装了 ProjectE-Team 时的反射实现
+ * ({@link ProjectETeamAccess}) -> 纯 ProjectE 实现({@link ProjectEAccess})。
  * 本 mod 的机器一律通过这里读写玩家的 EMC 与知识,因此团队模式无需机器侧特判。
  */
 public final class PXEmcAccess {

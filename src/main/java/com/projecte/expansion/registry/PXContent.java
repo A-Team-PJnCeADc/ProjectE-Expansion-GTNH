@@ -1,5 +1,7 @@
 package com.projecte.expansion.registry;
 
+import java.util.Locale;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.EnumRarity;
@@ -18,8 +20,11 @@ import com.projecte.expansion.item.ItemBlockPX;
 import com.projecte.expansion.item.ItemBlockTransmutationInterfacePX;
 import com.projecte.expansion.item.ItemPXSimple;
 import com.projecte.expansion.tile.TileEntityAdvancedChestPX;
+import com.projecte.expansion.tile.TileEntityCollectorPX;
 import com.projecte.expansion.tile.TileEntityCondenserMK3PX;
+import com.projecte.expansion.tile.TileEntityEMCLinkPX;
 import com.projecte.expansion.tile.TileEntityPowerFlowerPX;
+import com.projecte.expansion.tile.TileEntityRelayPX;
 import com.projecte.expansion.tile.TileEntityTransmutationInterfacePX;
 import com.projecte.expansion.util.Fuel;
 import com.projecte.expansion.util.Matter;
@@ -49,7 +54,7 @@ public final class PXContent {
 
     private static String tier(Matter m) {
         return m.name()
-            .toLowerCase(java.util.Locale.US);
+            .toLowerCase(Locale.US);
     }
 
     private static void registerBlocks() {
@@ -85,7 +90,7 @@ public final class PXContent {
         for (Fuel f : Fuel.VALUES) {
             if (!f.hasOwnItem()) continue;
             String c = f.name()
-                .toLowerCase(java.util.Locale.US);
+                .toLowerCase(Locale.US);
             BlockPXBase block = new BlockPXBase(c + "_fuel_block", Material.rock, 3.0F, 10.0F, "fuel/" + c);
             GameRegistry.registerBlock(block, ItemBlockPX.class, c + "_fuel_block");
             PXItems.FUEL_BLOCKS.put(f, block);
@@ -101,6 +106,9 @@ public final class PXContent {
             .registerTileEntity(TileEntityAdvancedChestPX.class, "projectexpansiongtnh.advanced_alchemical_chest");
         GameRegistry.registerTileEntity(TileEntityCondenserMK3PX.class, "projectexpansiongtnh.condenser_mk3");
         GameRegistry.registerTileEntity(TileEntityPowerFlowerPX.class, "projectexpansiongtnh.power_flower");
+        GameRegistry.registerTileEntity(TileEntityCollectorPX.class, "projectexpansiongtnh.collector");
+        GameRegistry.registerTileEntity(TileEntityRelayPX.class, "projectexpansiongtnh.relay");
+        GameRegistry.registerTileEntity(TileEntityEMCLinkPX.class, "projectexpansiongtnh.emc_link");
         GameRegistry.registerTileEntity(
             TileEntityTransmutationInterfacePX.class,
             "projectexpansiongtnh.transmutation_interface");
@@ -132,7 +140,7 @@ public final class PXContent {
         for (Fuel f : Fuel.VALUES) {
             if (!f.hasOwnItem()) continue;
             String c = f.name()
-                .toLowerCase(java.util.Locale.US);
+                .toLowerCase(Locale.US);
             Item item = new ItemPXSimple(c + "_fuel", "fuel/" + c, f.getRarity());
             GameRegistry.registerItem(item, c + "_fuel");
             PXItems.FUEL_ITEMS.put(f, item);
@@ -148,10 +156,10 @@ public final class PXContent {
         // 星：magnum/colossal/gargantuan x ein..omega
         for (Star.StarType type : Star.StarType.values()) {
             String typeDir = type.name()
-                .toLowerCase(java.util.Locale.US);
+                .toLowerCase(Locale.US);
             for (Star s : Star.VALUES) {
                 String n = s.name()
-                    .toLowerCase(java.util.Locale.US);
+                    .toLowerCase(Locale.US);
                 Item item = new ItemPXSimple(typeDir + "_star_" + n, "star/" + typeDir + "/" + n);
                 GameRegistry.registerItem(item, typeDir + "_star_" + n);
                 PXItems.STARS[type.ordinal()][s.ordinal()] = item;
