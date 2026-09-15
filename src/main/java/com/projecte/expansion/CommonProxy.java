@@ -1,5 +1,6 @@
 package com.projecte.expansion;
 
+import com.projecte.expansion.command.CommandPXReloadEmc;
 import com.projecte.expansion.net.PXExactEmcPKT;
 import com.projecte.expansion.net.PXLoginHandler;
 import com.projecte.expansion.net.PXNetwork;
@@ -45,5 +46,7 @@ public class CommonProxy {
     public void postInit(FMLPostInitializationEvent event) {}
 
     // 在此事件处理器中注册服务端命令
-    public void serverStarting(FMLServerStartingEvent event) {}
+    public void serverStarting(FMLServerStartingEvent event) {
+        event.registerServerCommand(new CommandPXReloadEmc());
+    }
 }

@@ -13,7 +13,8 @@
     "SlotConsumeMixin",
     "SlotOutputMixin",
     "TransmutationInventoryMixin",
-    "SlotLockMixin"
+    "SlotLockMixin",
+    "ReloadEmcCommandMixin"
   ],
   "client": [
     "GUITransmutationMixin",
